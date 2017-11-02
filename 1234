@@ -71,4 +71,82 @@ prod.qualifier=pre
 deployment.type=internal
 
 
+-------------------------------------------------------
+package com.vanguard.corp.ics.portal.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+@Configuration
+@Primary
+public class PortalSDKConfiguration {
+
+	@Value("$sma-data-transformer.webservice-{portal.products.endpoint}")
+	private String portalProductEndpoint;
+
+	@Value("$sma-data-transformer.webservice-{portal.references.endpoint}")
+	private String portalReferenceEndpoint;
+
+	@Value("$sma-data-transformer.webservice-{portal.tokenURL}")
+	private String tokenURL;
+
+	@Value("$sma-data-transformer.webservice-{portal.username}")
+	private String portalUsername;
+
+	@Value("$sma-data-transformer.webservice-{portal.password}")
+	private String portalPassword;
+
+	@Value("$sma-data-transformer.webservice-{portal.retryCount}")
+	private int retryCount;
+
+	public String getPortalProductEndpoint() {
+		return portalProductEndpoint;
+	}
+
+	public void setPortalProductEndpoint(String portalProductEndpoint) {
+		this.portalProductEndpoint = portalProductEndpoint;
+	}
+
+	public String getPortalReferenceEndpoint() {
+		return portalReferenceEndpoint;
+	}
+
+	public void setPortalReferenceEndpoint(String portalReferenceEndpoint) {
+		this.portalReferenceEndpoint = portalReferenceEndpoint;
+	}
+
+	public String getTokenURL() {
+		return tokenURL;
+	}
+
+	public void setTokenURL(String tokenURL) {
+		this.tokenURL = tokenURL;
+	}
+
+	public String getPortalUsername() {
+		return portalUsername;
+	}
+
+	public void setPortalUsername(String portalUsername) {
+		this.portalUsername = portalUsername;
+	}
+
+	public String getPortalPassword() {
+		return portalPassword;
+	}
+
+	public void setPortalPassword(String portalPassword) {
+		this.portalPassword = portalPassword;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+
+}
 

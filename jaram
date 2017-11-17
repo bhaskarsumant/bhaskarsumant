@@ -1,0 +1,3346 @@
+C:\Users\ubpv\.m2\repository\com\vanguard\corp\ics\portal-service\1.0.0-SNAPSHOT\portal-service-1.0.0-SNAPSHOT.jar
+
+com.vanguard.corp.ics.loggers
+	Logger.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/loggers/Logger.java $
+ $LastChangedRevision: 601516 $
+ $Author: uoex $
+ $LastChangedDate: 2017-10-05 20:37:45 -0400 (Thu, 05 Oct 2017) $
+*/
+package com.vanguard.corp.ics.loggers;
+
+import org.slf4j.helpers.MessageFormatter;
+
+import com.vanguard.services.logging.Log;
+
+public class Logger {
+
+	private static final int DEFAULT_ERROR_CODE = -1;
+
+	private final String className;
+
+	private Logger(String className) {
+		this.className = className;
+	}
+
+	public static Logger getLogger(Class<?> clazz) {
+		return getLogger(clazz.getName());
+	}
+
+	public static Logger getLogger(String name) {
+		return new Logger(name);
+	}
+
+	public void info(String message, Object... args) {
+		// Using report instead of info for SMA
+		Log.report(className, format(message, args));
+	}
+
+	public void trace(String message, Object... args) {
+		Log.trace(className, format(message, args));
+	}
+
+	public void warn(int code, String message, Object... args) {
+		Log.warning(className, format(message, args), code);
+	}
+
+	public void error(String message, Object... args) {
+		error(DEFAULT_ERROR_CODE, message, args);
+	}
+
+	public void error(int code, String message, Object... args) {
+		Log.error(className, format(message, args), code);
+	}
+
+	private String format(String message, Object... args) {
+		return args.length > 0 ? MessageFormatter.arrayFormat(message, args).getMessage() : message;
+	}
+
+}
+
+com.vanguard.corp.ics.portal
+	PortalService.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/PortalService.java $
+ $LastChangedRevision: 603267 $
+ $Author: uoex $
+ $LastChangedDate: 2017-10-13 02:33:28 -0400 (Fri, 13 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.vanguard.corp.ics.portal.domain.Product;
+
+public interface PortalService {
+
+	List<Product> getProducts();
+
+	Optional<Product> getProduct(String productCode);
+
+	String getCurrencyByProductCode(String productCode);
+
+	Optional<Product> getProductByRelatedPortfolio(String relatedPortfolioCode, Long applicationId,
+			Long portfolioTypeId);
+
+}
+
+com.vanguard.corp.ics.portal.config
+
+	PortalSDKConfiguration.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/config/PortalSDKConfiguration.java $
+ $LastChangedRevision: 603954 $
+ $Author: USTB $
+ $LastChangedDate: 2017-10-17 00:24:47 -0400 (Tue, 17 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class PortalSDKConfiguration {
+
+	@Value("$sdl-smadataloaderbatch-{portal.products.endpoint}")
+	private String portalProductEndpoint;
+
+	@Value("$sdl-smadataloaderbatch-{portal.references.endpoint}")
+	private String portalReferenceEndpoint;
+
+	@Value("$sdl-smadataloaderbatch-{portal.tokenURL}")
+	private String tokenURL;
+
+	@Value("$sdl-smadataloaderbatch-{portal.username}")
+	private String portalUsername;
+
+	@Value("$sdl-smadataloaderbatch-{portal.password}")
+	private String portalPassword;
+
+	@Value("$sdl-smadataloaderbatch-{portal.retryCount}")
+	private int retryCount = 3;
+
+	public String getPortalProductEndpoint() {
+		return portalProductEndpoint;
+	}
+
+	public void setPortalProductEndpoint(String portalProductEndpoint) {
+		this.portalProductEndpoint = portalProductEndpoint;
+	}
+
+	public String getPortalReferenceEndpoint() {
+		return portalReferenceEndpoint;
+	}
+
+	public void setPortalReferenceEndpoint(String portalReferenceEndpoint) {
+		this.portalReferenceEndpoint = portalReferenceEndpoint;
+	}
+
+	public String getTokenURL() {
+		return tokenURL;
+	}
+
+	public void setTokenURL(String tokenURL) {
+		this.tokenURL = tokenURL;
+	}
+
+	public String getPortalUsername() {
+		return portalUsername;
+	}
+
+	public void setPortalUsername(String portalUsername) {
+		this.portalUsername = portalUsername;
+	}
+
+	public String getPortalPassword() {
+		return portalPassword;
+	}
+
+	public void setPortalPassword(String portalPassword) {
+		this.portalPassword = portalPassword;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+
+}
+
+com.vanguard.corp.ics.portal.domain
+
+	Currency.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/domain/Currency.java $
+ $LastChangedRevision: 597440 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-20 00:42:44 -0400 (Wed, 20 Sep 2017) $
+*/
+package com.vanguard.corp.ics.portal.domain;
+
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Currency implements Serializable {
+
+	private static final long serialVersionUID = -7830143657509915836L;
+
+	private long currencyId;
+
+	private String currencyCode;
+
+	private String currencyName;
+
+	private String currencyDescription;
+
+	public long getCurrencyId() {
+		return currencyId;
+	}
+
+	public Currency setCurrencyId(long currencyId) {
+		this.currencyId = currencyId;
+		return this;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public Currency setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+		return this;
+	}
+
+	public String getCurrencyName() {
+		return currencyName;
+	}
+
+	public Currency setCurrencyName(String currencyName) {
+		this.currencyName = currencyName;
+		return this;
+	}
+
+	public String getCurrencyDescription() {
+		return currencyDescription;
+	}
+
+	public Currency setCurrencyDescription(String currencyDescription) {
+		this.currencyDescription = currencyDescription;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "Currency [currencyId=" + currencyId + ", currencyCode=" + currencyCode + ", currencyName="
+				+ currencyName + ", currencyDescription=" + currencyDescription + "]";
+	}
+
+}
+
+Product.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/domain/Product.java $
+ $LastChangedRevision: 604338 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-10-18 00:57:17 -0400 (Wed, 18 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.domain;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Product implements Serializable {
+
+	private static final long serialVersionUID = 6270880439977349789L;
+
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+
+	private Long productID;
+
+	private Long productTypeID;
+
+	private String productName;
+
+	private String clientID;
+
+	private String productCode;
+
+	private String investmentStyleID;
+
+	private Long assetClassID;
+
+	private Long investmentMarketID;
+
+	private Long investmentGroupID;
+
+	private Long baseCurrencyID;
+
+	private Long hedgeTypeID;
+
+	private Double hedgePercentage;
+
+	private Long hedgeCurrencyID;
+
+	private Long benchMarkProviderID;
+
+	private String benchMarkName;
+
+	private Long custodianID;
+
+	private Long futuresClearingAgentID;
+
+	private Double initialAUM;
+
+	private Long initialAUMCurrencyID;
+
+	private Long productFundingTypeID;
+
+	private Long investmentManagementEntityID;
+
+	private Long contactingEntityID;
+
+	private Long salesTeamEntityID;
+
+	private String targetLaunchDate;
+
+	private String inceptionDate;
+
+	private String terminationDate;
+
+	private String perfInceptionDate;
+
+	private String perfTerminationDate;
+
+	private String targetTrackingRequiredFlag;
+
+	private Long portfolioReturnCalcID;
+
+	private Integer exAnteMaxBreachIMA;
+
+	private Integer exAnteMaxTriggernotification;
+
+	private Integer exPostMaxBreachIMA;
+
+	private Integer exPostMaxTriggernotification;
+
+	private Long statusID;
+
+	private List<RelatedPortfolio> relatedPortfolios;
+
+	public Long getProductID() {
+		return productID;
+	}
+
+	public void setProductID(Long productID) {
+		this.productID = productID;
+	}
+
+	public Long getProductTypeID() {
+		return productTypeID;
+	}
+
+	public void setProductTypeID(Long productTypeID) {
+		this.productTypeID = productTypeID;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getClientID() {
+		return clientID;
+	}
+
+	public void setClientID(String clientID) {
+		this.clientID = clientID;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getInvestmentStyleID() {
+		return investmentStyleID;
+	}
+
+	public void setInvestmentStyleID(String investmentStyleID) {
+		this.investmentStyleID = investmentStyleID;
+	}
+
+	public Long getAssetClassID() {
+		return assetClassID;
+	}
+
+	public void setAssetClassID(Long assetClassID) {
+		this.assetClassID = assetClassID;
+	}
+
+	public Long getInvestmentMarketID() {
+		return investmentMarketID;
+	}
+
+	public void setInvestmentMarketID(Long investmentMarketID) {
+		this.investmentMarketID = investmentMarketID;
+	}
+
+	public Long getInvestmentGroupID() {
+		return investmentGroupID;
+	}
+
+	public void setInvestmentGroupID(Long investmentGroupID) {
+		this.investmentGroupID = investmentGroupID;
+	}
+
+	public Long getBaseCurrencyID() {
+		return baseCurrencyID;
+	}
+
+	public void setBaseCurrencyID(Long baseCurrencyID) {
+		this.baseCurrencyID = baseCurrencyID;
+	}
+
+	public Long getHedgeTypeID() {
+		return hedgeTypeID;
+	}
+
+	public void setHedgeTypeID(Long hedgeTypeID) {
+		this.hedgeTypeID = hedgeTypeID;
+	}
+
+	public Double getHedgePercentage() {
+		return hedgePercentage;
+	}
+
+	public void setHedgePercentage(Double hedgePercentage) {
+		this.hedgePercentage = hedgePercentage;
+	}
+
+	public Long getHedgeCurrencyID() {
+		return hedgeCurrencyID;
+	}
+
+	public void setHedgeCurrencyID(Long hedgeCurrencyID) {
+		this.hedgeCurrencyID = hedgeCurrencyID;
+	}
+
+	public Long getBenchMarkProviderID() {
+		return benchMarkProviderID;
+	}
+
+	public void setBenchMarkProviderID(Long benchMarkProviderID) {
+		this.benchMarkProviderID = benchMarkProviderID;
+	}
+
+	public String getBenchMarkName() {
+		return benchMarkName;
+	}
+
+	public void setBenchMarkName(String benchMarkName) {
+		this.benchMarkName = benchMarkName;
+	}
+
+	public Long getCustodianID() {
+		return custodianID;
+	}
+
+	public void setCustodianID(Long custodianID) {
+		this.custodianID = custodianID;
+	}
+
+	public Long getFuturesClearingAgentID() {
+		return futuresClearingAgentID;
+	}
+
+	public void setFuturesClearingAgentID(Long futuresClearingAgentID) {
+		this.futuresClearingAgentID = futuresClearingAgentID;
+	}
+
+	public Double getInitialAUM() {
+		return initialAUM;
+	}
+
+	public void setInitialAUM(Double initialAUM) {
+		this.initialAUM = initialAUM;
+	}
+
+	public Long getInitialAUMCurrencyID() {
+		return initialAUMCurrencyID;
+	}
+
+	public void setInitialAUMCurrencyID(Long initialAUMCurrencyID) {
+		this.initialAUMCurrencyID = initialAUMCurrencyID;
+	}
+
+	public Long getProductFundingTypeID() {
+		return productFundingTypeID;
+	}
+
+	public void setProductFundingTypeID(Long productFundingTypeID) {
+		this.productFundingTypeID = productFundingTypeID;
+	}
+
+	public Long getInvestmentManagementEntityID() {
+		return investmentManagementEntityID;
+	}
+
+	public void setInvestmentManagementEntityID(Long investmentManagementEntityID) {
+		this.investmentManagementEntityID = investmentManagementEntityID;
+	}
+
+	public Long getContactingEntityID() {
+		return contactingEntityID;
+	}
+
+	public void setContactingEntityID(Long contactingEntityID) {
+		this.contactingEntityID = contactingEntityID;
+	}
+
+	public Long getSalesTeamEntityID() {
+		return salesTeamEntityID;
+	}
+
+	public void setSalesTeamEntityID(Long salesTeamEntityID) {
+		this.salesTeamEntityID = salesTeamEntityID;
+	}
+
+	public String getTargetLaunchDate() {
+		return this.targetLaunchDate;
+	}
+
+	public LocalDate getTargetLaunchDateAsDate() {
+		return parseDate(this.targetLaunchDate);
+	}
+
+	public void setTargetLaunchDate(String targetLaunchDate) {
+		this.targetLaunchDate = targetLaunchDate;
+	}
+
+	public Long getStatusID() {
+		return statusID;
+	}
+
+	public void setStatusID(Long statusID) {
+		this.statusID = statusID;
+	}
+
+	public String getInceptionDate() {
+		return this.inceptionDate;
+	}
+
+	public LocalDate getInceptionDateAsDate() {
+		return parseDate(this.inceptionDate);
+	}
+
+	public void setInceptionDate(String inceptionDate) {
+		this.inceptionDate = inceptionDate;
+	}
+
+	public String getTerminationDate() {
+		return this.terminationDate;
+	}
+
+	public LocalDate getTerminationDateAsDate() {
+		return parseDate(this.terminationDate);
+	}
+
+	public void setTerminationDate(String terminationDate) {
+		this.terminationDate = terminationDate;
+	}
+
+	public String getPerfInceptionDate() {
+		return this.perfInceptionDate;
+	}
+
+	public LocalDate getPerfInceptionDateAsDate() {
+		return parseDate(this.perfInceptionDate);
+	}
+
+	public void setPerfInceptionDate(String perfInceptionDate) {
+		this.perfInceptionDate = perfInceptionDate;
+	}
+
+	public String getPerfTerminationDate() {
+		return this.perfTerminationDate;
+	}
+
+	public LocalDate getPerfTerminationDateAsDate() {
+		return parseDate(this.perfTerminationDate);
+	}
+
+	public void setPerfTerminationDate(String perfTerminationDate) {
+		this.perfTerminationDate = perfTerminationDate;
+	}
+
+	public String getTargetTrackingRequiredFlag() {
+		return targetTrackingRequiredFlag;
+	}
+
+	public void setTargetTrackingRequiredFlag(String targetTrackingRequiredFlag) {
+		this.targetTrackingRequiredFlag = targetTrackingRequiredFlag;
+	}
+
+	public Long getPortfolioReturnCalcID() {
+		return portfolioReturnCalcID;
+	}
+
+	public void setPortfolioReturnCalcID(Long portfolioReturnCalcID) {
+		this.portfolioReturnCalcID = portfolioReturnCalcID;
+	}
+
+	public Integer getExAnteMaxBreachIMA() {
+		return exAnteMaxBreachIMA;
+	}
+
+	public void setExAnteMaxBreachIMA(Integer exAnteMaxBreachIMA) {
+		this.exAnteMaxBreachIMA = exAnteMaxBreachIMA;
+	}
+
+	public Integer getExAnteMaxTriggernotification() {
+		return exAnteMaxTriggernotification;
+	}
+
+	public void setExAnteMaxTriggernotification(Integer exAnteMaxTriggernotification) {
+		this.exAnteMaxTriggernotification = exAnteMaxTriggernotification;
+	}
+
+	public Integer getExPostMaxBreachIMA() {
+		return exPostMaxBreachIMA;
+	}
+
+	public void setExPostMaxBreachIMA(Integer exPostMaxBreachIMA) {
+		this.exPostMaxBreachIMA = exPostMaxBreachIMA;
+	}
+
+	public Integer getExPostMaxTriggernotification() {
+		return exPostMaxTriggernotification;
+	}
+
+	public void setExPostMaxTriggernotification(Integer exPostMaxTriggernotification) {
+		this.exPostMaxTriggernotification = exPostMaxTriggernotification;
+	}
+
+	public List<RelatedPortfolio> getRelatedPortfolios() {
+		return relatedPortfolios;
+	}
+
+	public void setRelatedPortfolios(List<RelatedPortfolio> relatedPortfolios) {
+		this.relatedPortfolios = relatedPortfolios;
+	}
+
+	private LocalDate parseDate(String dateString) {
+		return dateString == null ? null : LocalDate.parse(dateString, DATE_FORMATTER);
+	}
+
+	@Override
+	public String toString() {
+		return "Product [productID=" + productID + ", productCode=" + productCode + "]";
+	}
+}
+
+RelatedPortfolio.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/domain/RelatedPortfolio.java $
+ $LastChangedRevision: 602337 $
+ $Author: uoex $
+ $LastChangedDate: 2017-10-11 00:09:00 -0400 (Wed, 11 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class RelatedPortfolio {
+
+	private Long applicationId;
+
+	private Long portfolioTypeId;
+
+	private String relatedPortfolioCode;
+
+	private String realtedPortfolioId;
+
+	public Long getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(Long applicationId) {
+		this.applicationId = applicationId;
+	}
+
+	public Long getPortfolioTypeId() {
+		return portfolioTypeId;
+	}
+
+	public void setPortfolioTypeId(Long portfolioTypeId) {
+		this.portfolioTypeId = portfolioTypeId;
+	}
+
+	public String getRelatedPortfolioCode() {
+		return relatedPortfolioCode;
+	}
+
+	public void setRelatedPortfolioCode(String relatedPortfolioCode) {
+		this.relatedPortfolioCode = relatedPortfolioCode;
+	}
+
+	public String getRealtedPortfolioId() {
+		return realtedPortfolioId;
+	}
+
+	public void setRealtedPortfolioId(String realtedPortfolioId) {
+		this.realtedPortfolioId = realtedPortfolioId;
+	}
+
+	@Override
+	public String toString() {
+		return "RelatedPortfolio [applicationId=" + applicationId + ", portfolioTypeId=" + portfolioTypeId
+				+ ", relatedPortfolioCode=" + relatedPortfolioCode + ", realtedPortfolioId=" + realtedPortfolioId + "]";
+	}
+}
+
+com.vanguard.corp.ics.portal.exception
+	PortalException.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/exception/PortalException.java $
+ $LastChangedRevision: 597440 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-20 00:42:44 -0400 (Wed, 20 Sep 2017) $
+*/
+package com.vanguard.corp.ics.portal.exception;
+
+public class PortalException extends RuntimeException {
+
+	private static final long serialVersionUID = 6741344423851924118L;
+
+	public PortalException(String message) {
+		super(message);
+	}
+
+}
+
+com.vanguard.corp.ics.portal.helper
+	TokenHelper.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/helper/TokenHelper.java $
+ $LastChangedRevision: 603652 $
+ $Author: USTB $
+ $LastChangedDate: 2017-10-16 01:56:58 -0400 (Mon, 16 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.helper;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.vanguard.corp.ics.portal.config.PortalSDKConfiguration;
+import com.vanguard.services.logging.Log;
+
+public class TokenHelper {
+
+	private TokenHelper() {
+	}
+
+	public static Cookie getVGSessionCookie(PortalSDKConfiguration config) {
+		return new Cookie("VGSESSION", getToken(config));
+	}
+
+	private static String getToken(PortalSDKConfiguration config) {
+
+		try {
+			final Client client = ClientBuilder.newClient();
+			final WebTarget target = client.target(config.getTokenURL());
+
+			final Form form = new Form();
+			form.param("SPX_TOKEN_TYPE", "AD");
+			form.param("SPX_TOKEN_USER", config.getPortalUsername());
+			form.param("SPX_TOKEN_PASSWORD", config.getPortalPassword());
+
+			final Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
+					.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
+			final String jsonstring = response.readEntity(String.class);
+
+			final JSONObject obj = new JSONObject(jsonstring);
+			final JSONArray tokenSet = obj.getJSONArray("TokenSet");
+			final JSONObject token = (JSONObject) tokenSet.get(0);
+			final String tokenValue = (String) token.get("TokenValue");
+
+			return tokenValue;
+
+		} catch (final Exception e) {
+			Log.error(TokenHelper.class.getName(), "Exception while getting auth token:" + e.getMessage(), 1);
+		}
+		return "";
+	}
+
+}
+
+com.vanguard.corp.ics.portal.impl
+	PortalServiceImpl.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/impl/PortalServiceImpl.java $
+ $LastChangedRevision: 603267 $
+ $Author: uoex $
+ $LastChangedDate: 2017-10-13 02:33:28 -0400 (Fri, 13 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.impl;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.vanguard.corp.ics.portal.PortalService;
+import com.vanguard.corp.ics.portal.domain.Currency;
+import com.vanguard.corp.ics.portal.domain.Product;
+import com.vanguard.corp.ics.portal.repository.PortalCurrencyRepository;
+import com.vanguard.corp.ics.portal.repository.PortalProductRepository;
+
+@Component
+public class PortalServiceImpl implements PortalService {
+
+	@Autowired
+	private PortalProductRepository productRepository;
+
+	@Autowired
+	private PortalCurrencyRepository currencyRepository;
+
+	@Override
+	public List<Product> getProducts() {
+		return productRepository.getEntities();
+	}
+
+	@Override
+	public Optional<Product> getProduct(String productCode) {
+		return productRepository.getEntity(productCode);
+	}
+
+	@Override
+	public Optional<Product> getProductByRelatedPortfolio(String relatedPortfolioCode, Long applicationId,
+			Long portfolioTypeId) {
+		return getProducts().stream()
+				.filter(product -> product.getRelatedPortfolios() != null)
+				.filter(product -> product.getRelatedPortfolios().stream()
+						.filter(rp -> applicationId.equals(rp.getApplicationId()))
+						.filter(rp -> portfolioTypeId.equals(rp.getPortfolioTypeId()))
+						.anyMatch(r -> relatedPortfolioCode.equals(r.getRelatedPortfolioCode())))
+				.findFirst();
+	}
+
+	@Override
+	public String getCurrencyByProductCode(String productCode) {
+
+		final Optional<Product> product = this.getProduct(productCode);
+		// if there is Portal Product find the baseCurrency from repo and return
+		// its currencyId
+
+		return String.valueOf(product.map(tempProd -> {
+			return currencyRepository.getEntity(tempProd.getBaseCurrencyID().toString()).get();
+		}).orElse(new Currency().setCurrencyCode("")).getCurrencyCode());
+
+	}
+
+}
+
+com.vanguard.corp.ics.portal.repository
+	BasePortalRepository.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/repository/BasePortalRepository.java $
+ $LastChangedRevision: 603652 $
+ $Author: Daghan Acay$
+ $LastChangedDate: 2017-10-16 01:56:58 -0400 (Mon, 16 Oct 2017) $
+*/
+package com.vanguard.corp.ics.portal.repository;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MediaType;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vanguard.corp.ics.loggers.Logger;
+import com.vanguard.corp.ics.portal.config.PortalSDKConfiguration;
+import com.vanguard.corp.ics.portal.exception.PortalException;
+import com.vanguard.corp.ics.portal.helper.TokenHelper;
+import com.vanguard.jaxrs.feature.SecureClientRequestFeature;
+
+@SuppressWarnings("unchecked")
+public abstract class BasePortalRepository<T> {
+
+	private static final Logger LOG = Logger.getLogger(BasePortalRepository.class);
+
+	private static Long WAIT_TIME_MS = 12 * 1000L; // 12 Secs
+
+	@Autowired
+	protected PortalSDKConfiguration config;
+
+	/**
+	 * Should return URL where the entity can be retrieved and it should always
+	 * end with "/" e.g.
+	 *
+	 * http://satapii.vanguard.com:1080/rs/cf/portal-product-webservice/rs/
+	 * products/productcode/
+	 *
+	 * @return
+	 */
+	public abstract String getEntityUrl();
+
+	/**
+	 * Should return URL where the list of the entities can be retrieved and it
+	 * should always end with "/" e.g.
+	 *
+	 * http://satapii.vanguard.com:1080/rs/cf/portal-product-webservice/rs/
+	 * products
+	 *
+	 * @return
+	 */
+	public abstract String getListUrl();
+
+	public List<T> getEntities() {
+		return Arrays.asList((T[]) getRequest(getListUrl(), getArrayType()));
+	}
+
+	public Optional<T> getEntity(String id) {
+		return Optional.ofNullable(this.getRequest(getEntityUrl() + id, getType()));
+	}
+
+	protected Class<T> getType() {
+		return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	}
+
+	protected Class<?> getArrayType() {
+		final T[] arrayType = (T[]) Array.newInstance(getType(), 1);
+		return arrayType.getClass();
+	}
+
+	protected <R> R getRequest(String url, Class<R> returnClass) {
+		final Cookie vgSessionCookie = TokenHelper.getVGSessionCookie(config);
+		Client client = ClientBuilder.newClient();
+		client = client.register(SecureClientRequestFeature.class);
+
+		// Reprocess failures up to retryCount number of times
+		int i = 0;
+		while (true) {
+			try {
+				return client.target(url).request(MediaType.APPLICATION_JSON)
+						.property(SecureClientRequestFeature.HTTP_AUTHENTICATION_COOKIE, vgSessionCookie)
+						.accept(MediaType.APPLICATION_JSON).get(returnClass);
+
+			} catch (final Exception e) {
+				LOG.error("Error connecting to portal.");
+				if (i < config.getRetryCount()) {
+					i++;
+
+					// Wait a bit before retrying
+					try {
+						Thread.sleep(WAIT_TIME_MS);
+					} catch (final InterruptedException e1) {
+						LOG.error("Error while waiting to retry. {}", e);
+						Thread.currentThread().interrupt();
+					}
+					LOG.info("Retrying Portal Connection {}/{}", i, config.getRetryCount());
+				} else {
+					LOG.error("Error making request to: {}, {}", url, e);
+					throw new PortalException("Could not connect to Portal");
+				}
+			}
+		}
+
+	}
+
+}
+
+PortalCurrencyRepository.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/repository/PortalCurrencyRepository.java $
+ $LastChangedRevision: 597440 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-20 00:42:44 -0400 (Wed, 20 Sep 2017) $
+*/
+package com.vanguard.corp.ics.portal.repository;
+
+import org.springframework.stereotype.Service;
+
+import com.vanguard.corp.ics.portal.domain.Currency;
+
+@Service
+public class PortalCurrencyRepository extends BasePortalRepository<Currency> {
+
+	@Override
+	public String getEntityUrl() {
+		return config.getPortalReferenceEndpoint() + "/currency/";
+	}
+
+	@Override
+	public String getListUrl() {
+		return config.getPortalReferenceEndpoint() + "/currency";
+	}
+
+}
+
+PortalProductRepository.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/PortalService/trunk/src/main/java/com/vanguard/corp/ics/portal/repository/PortalProductRepository.java $
+ $LastChangedRevision: 597440 $
+ $Author: Daghan Acay$
+ $LastChangedDate: 2017-09-20 00:42:44 -0400 (Wed, 20 Sep 2017) $
+*/
+package com.vanguard.corp.ics.portal.repository;
+
+import org.springframework.stereotype.Service;
+
+import com.vanguard.corp.ics.portal.domain.Product;
+
+@Service
+public class PortalProductRepository extends BasePortalRepository<Product> {
+
+	@Override
+	public String getEntityUrl() {
+		return config.getPortalProductEndpoint() + "/productcode/";
+	}
+
+	@Override
+	public String getListUrl() {
+		return config.getPortalProductEndpoint();
+	}
+
+}
+
+C:\Users\ubpv\.m2\repository\com\vanguard\corp\ics\targetdataaccess\1.0.0-SNAPSHOT\targetdataaccess-1.0.0-SNAPSHOT.jar
+
+com.vanguard.corp.ics.dao
+	DAO.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/DAO.java $
+ $LastChangedRevision: 587237 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-08-06 19:49:28 -0400 (Sun, 06 Aug 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+import java.io.Serializable;
+
+public interface DAO<T extends Number> extends Serializable {
+
+	T getId();
+
+	void setId(T id);
+}
+
+FileDAO.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/FileDAO.java $
+ $LastChangedRevision: 587237 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-08-06 19:49:28 -0400 (Sun, 06 Aug 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+public interface FileDAO<T extends Number> extends DAO<T> {
+
+	public DatasourceFileDAO getDatasourceFileDAO();
+
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO);
+
+}
+
+PortfolioDAO.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/PortfolioDAO.java $
+ $LastChangedRevision: 587237 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-08-06 19:49:28 -0400 (Sun, 06 Aug 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+public interface PortfolioDAO<T extends Number> extends DAO<T> {
+
+	public String getPortfolioCode();
+
+	public void setPortfolioCode(String portfolioCode);
+}
+
+com.vanguard.corp.ics.dao.staging
+	FactsetMonthlyCharacteristicsStagingDAO.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/staging/FactsetMonthlyCharacteristicsStagingDAO.java $
+ $LastChangedRevision: 595497 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-11 23:39:45 -0400 (Mon, 11 Sep 2017) $
+*/
+package com.vanguard.corp.ics.dao.staging;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.dao.FileDAO;
+import com.vanguard.corp.ics.dao.PortfolioDAO;
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+@Entity
+@Table(name = "SDLSADM.TFACTSET_FILE")
+public class FactsetMonthlyCharacteristicsStagingDAO implements PortfolioDAO<Long>, FileDAO<Long> {
+
+	private static final long serialVersionUID = -7745016294766862195L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDLSADM.SEQ1FACTSETFILEID")
+	@SequenceGenerator(name = "SDLSADM.SEQ1FACTSETFILEID", sequenceName = "SDLSADM.SEQ1FACTSETFILEID", initialValue = 1, allocationSize = 100)
+	@Column(name = "FACTSET_FILE_ID", unique = true, nullable = false)
+	private Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "DATA_SRC_FILE_ID")
+	private DatasourceFileDAO datasourceFileDAO;
+
+	@Column(name = "EFFCTV_DT", nullable = false)
+	private Date effectiveDate;
+
+	@Column(name = "CHRCTRSTCS_TYP", nullable = false)
+	private String characteristicsType;
+
+	@Column(name = "CHRCTRSTCS_NAME", nullable = false)
+	private String characteristicsName;
+
+	@Column(name = "PORT_CD", nullable = false)
+	private String portfolioCode;
+
+	@Column(name = "PORT_VAL", nullable = true)
+	private String portfolioValue;
+
+	@Column(name = "BMRK_CD", nullable = false)
+	private String benchMarkCode;
+
+	@Column(name = "BMRK_VAL", nullable = true)
+	private String benchMarkValue;
+
+	@Column(name = "CREATD_BY_USER_ID", nullable = false, insertable = false)
+	private String createdUser;
+
+	@Column(name = "CREATD_DT", nullable = false, insertable = false)
+	private Date createdDate;
+
+	@Column(name = "LST_UPDTD_USER_ID", nullable = false, insertable = false)
+	private String updatedUser;
+
+	@Column(name = "LST_UPDTD_TS", nullable = false, insertable = false)
+	private Date updatedDate;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public DatasourceFileDAO getDatasourceFileDAO() {
+		return datasourceFileDAO;
+	}
+
+	@Override
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO) {
+		this.datasourceFileDAO = datasourceFileDAO;
+	}
+
+	@Override
+	public String getPortfolioCode() {
+		return portfolioCode;
+	}
+
+	@Override
+	public void setPortfolioCode(String portfolioCode) {
+		this.portfolioCode = portfolioCode;
+	}
+
+	public String getPortfolioValue() {
+		return portfolioValue;
+	}
+
+	public void setPortfolioValue(String portfolioValue) {
+		this.portfolioValue = portfolioValue;
+	}
+
+	public String getBenchMarkCode() {
+		return benchMarkCode;
+	}
+
+	public void setBenchMarkCode(String benchMarkCode) {
+		this.benchMarkCode = benchMarkCode;
+	}
+
+	public String getBenchMarkValue() {
+		return benchMarkValue;
+	}
+
+	public void setBenchMarkValue(String benchMarkValue) {
+		this.benchMarkValue = benchMarkValue;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public String getCharacteristicsType() {
+		return characteristicsType;
+	}
+
+	public void setCharacteristicsType(String characteristicsType) {
+		this.characteristicsType = characteristicsType;
+	}
+
+	public String getCharacteristicsName() {
+		return characteristicsName;
+	}
+
+	public void setCharacteristicsName(String characteristicsName) {
+		this.characteristicsName = characteristicsName;
+	}
+
+}
+
+PerfomanceHistoryStagingDAO.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2016 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/staging/PerfomanceHistoryStagingDAO.java $
+ $LastChangedRevision: 600381 $
+ $Author: USTB $
+ $LastChangedDate: 2017-10-02 23:49:40 -0400 (Mon, 02 Oct 2017) $
+*/
+package com.vanguard.corp.ics.dao.staging;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.dao.FileDAO;
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+@Entity
+@Table(name = "SDLSADM.THISTORICAL_PERFORMANCE")
+public class PerfomanceHistoryStagingDAO implements FileDAO<Long> {
+
+	private static final long serialVersionUID = 2854164949297609399L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDLSADM.SEQ1HISTORYID")
+	@SequenceGenerator(name = "SDLSADM.SEQ1HISTORYID", sequenceName = "SDLSADM.SEQ1HISTORYID")
+	@Column(name = "HISTORY_ID")
+	private Long id;
+
+	@Column(name = "EFFECTIVE_DT", nullable = false)
+	private Date effectiveDate;
+
+	@Column(name = "PRT_GROSS", nullable = true)
+	private BigDecimal portfolioGross;
+
+	@Column(name = "PRT_NET", nullable = true)
+	private BigDecimal portfolioNet;
+
+	@Column(name = "BMK_NET", nullable = true)
+	private BigDecimal benchmarkNet;
+
+	@Column(name = "BMK_GROSS", nullable = true)
+	private BigDecimal benchmarkGross;
+
+	@Column(name = "BMK_PRICE", nullable = true)
+	private BigDecimal benchmarkPrice;
+
+	@ManyToOne(cascade = { CascadeType.MERGE })
+	@JoinColumn(name = "DATA_SRC_FILE_ID")
+	private DatasourceFileDAO datasourceFileDAO;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public BigDecimal getPortfolioGross() {
+		return portfolioGross;
+	}
+
+	public void setPortfolioGross(BigDecimal portfolioGross) {
+		this.portfolioGross = portfolioGross;
+	}
+
+	public BigDecimal getPortfolioNet() {
+		return portfolioNet;
+	}
+
+	public void setPortfolioNet(BigDecimal portfolioNet) {
+		this.portfolioNet = portfolioNet;
+	}
+
+	public BigDecimal getBenchmarkNet() {
+		return benchmarkNet;
+	}
+
+	public void setBenchmarkNet(BigDecimal benchmarkNet) {
+		this.benchmarkNet = benchmarkNet;
+	}
+
+	public BigDecimal getBenchmarkGross() {
+		return benchmarkGross;
+	}
+
+	public void setBenchmarkGross(BigDecimal benchmarkGross) {
+		this.benchmarkGross = benchmarkGross;
+	}
+
+	public BigDecimal getBenchmarkPrice() {
+		return benchmarkPrice;
+	}
+
+	public void setBenchmarkPrice(BigDecimal benchmarkPrice) {
+		this.benchmarkPrice = benchmarkPrice;
+	}
+
+	@Override
+	public DatasourceFileDAO getDatasourceFileDAO() {
+		return datasourceFileDAO;
+	}
+
+	@Override
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO) {
+		this.datasourceFileDAO = datasourceFileDAO;
+	}
+
+}
+
+TransactionsStagingDAO.class
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2016 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/staging/TransactionsStagingDAO.java $
+ $LastChangedRevision: 595497 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-11 23:39:45 -0400 (Mon, 11 Sep 2017) $
+*/
+package com.vanguard.corp.ics.dao.staging;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.dao.FileDAO;
+import com.vanguard.corp.ics.dao.PortfolioDAO;
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+@Entity
+@Table(name = "SDLSADM.TSCD_TXN_FILE")
+public class TransactionsStagingDAO implements PortfolioDAO<Long>, FileDAO<Long> {
+
+	private static final long serialVersionUID = 2854164949297609399L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDLSADM.SEQ1SCDTXNFILEID")
+	@SequenceGenerator(name = "SDLSADM.SEQ1SCDTXNFILEID", sequenceName = "SDLSADM.SEQ1SCDTXNFILEID", initialValue = 1, allocationSize = 100)
+	@Column(name = "SCD_TXN_FILE_ID", unique = true, nullable = false)
+	private Long id;
+
+	@Column(name = "PORT_CD", nullable = false)
+	private String portfolioCode;
+
+	@ManyToOne(cascade = { CascadeType.MERGE })
+	@JoinColumn(name = "DATA_SRC_FILE_ID")
+	private DatasourceFileDAO datasourceFileDAO;
+
+	@Column(name = "SECRTY_NO", nullable = false)
+	private String securityNumber;
+
+	@Column(name = "SECRTY_NM", nullable = true)
+	private String securityName;
+
+	@Column(name = "INSTRMNT_TYP", nullable = true)
+	private String instrumentType;
+
+	@Column(name = "TRD_DT", nullable = false)
+	private Date tradeDate;
+
+	@Column(name = "PAYMT_DT", nullable = true)
+	private Date paymentDate;
+
+	@Column(name = "NOMINAL", nullable = true)
+	private Double nominal;
+
+	@Column(name = "ISIN", nullable = true)
+	private String isin;
+
+	@Column(name = "PAYMNT_CCY_CD", nullable = false)
+	private String paymentCurrencyCode;
+
+	@Column(name = "TXN_PRC", nullable = true)
+	private Double transactionPrice;
+
+	@Column(name = "FWD_PRC", nullable = true)
+	private Double forwardPrice;
+
+	@Column(name = "INTDIVQC", nullable = true)
+	private Double intDivQC;
+
+	@Column(name = "CRRNT_VAL_QC", nullable = true)
+	private Double currentValueQC;
+
+	@Column(name = "FWD_CRRNT_VAL_QC", nullable = true)
+	private Double forwardCurrentValueQC;
+
+	@Column(name = "PYMNT_AMNT_QC", nullable = true)
+	private Double paymentAmountQC;
+
+	@Column(name = "ACCRD_INTRST_QC", nullable = true)
+	private Double accruedInterestQC;
+
+	@Column(name = "BUS_TRANS_CD", nullable = true)
+	private String businessTransactionCode;
+
+	@Column(name = "ELEM_TRANS_CD", nullable = true)
+	private String elementTransactionCode;
+
+	@Column(name = "COUNTERPART", nullable = true)
+	private String counterpart;
+
+	@Column(name = "BANK_ACCOUNT", nullable = true)
+	private String bankAccount;
+
+	@Column(name = "MODEL_PORTFOLIO", nullable = true)
+	private String modelPortfolio;
+
+	@Column(name = "TXN_NO", nullable = true)
+	private Double transactionNumber;
+
+	@Column(name = "PRICE_T", nullable = true)
+	private Double priceT;
+
+	@Column(name = "PRICE_T_1", nullable = true)
+	private Double priceT1;
+
+	@Column(name = "FX_QC_PC_T", nullable = true)
+	private Double fxQC;
+
+	@Column(name = "FX_QC_PC_T_1", nullable = true)
+	private Double fxQC1;
+
+	@Column(name = "PORT_CCY_CD", nullable = true)
+	private String portfolioCurrencyCode;
+
+	@Column(name = "PYMNT_AMNT_PC", nullable = true)
+	private Double paymentAmountPC;
+
+	@Column(name = "CREATD_BY_USER_ID", nullable = true, insertable = false)
+	private String createdUser;
+
+	@Column(name = "CREATD_DT", nullable = true, insertable = false)
+	private Date createdDate;
+
+	@Column(name = "LST_UPDTD_USER_ID", nullable = true, insertable = false)
+	private String updatedUser;
+
+	@Column(name = "LST_UPDTD_TS", nullable = true, insertable = false)
+	private Date updatedDate;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
+	public String getPortfolioCode() {
+		return portfolioCode;
+	}
+
+	@Override
+	public void setPortfolioCode(String portfolioCode) {
+		this.portfolioCode = portfolioCode;
+	}
+
+	@Override
+	public DatasourceFileDAO getDatasourceFileDAO() {
+		return datasourceFileDAO;
+	}
+
+	@Override
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO) {
+		this.datasourceFileDAO = datasourceFileDAO;
+	}
+
+	public String getSecurityNumber() {
+		return securityNumber;
+	}
+
+	public void setSecurityNumber(String securityNumber) {
+		this.securityNumber = securityNumber;
+	}
+
+	public String getSecurityName() {
+		return securityName;
+	}
+
+	public void setSecurityName(String securityName) {
+		this.securityName = securityName;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
+
+	public Date getTradeDate() {
+		return tradeDate;
+	}
+
+	public void setTradeDate(Date tradeDate) {
+		this.tradeDate = tradeDate;
+	}
+
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	public Double getNominal() {
+		return nominal;
+	}
+
+	public void setNominal(Double nominal) {
+		this.nominal = nominal;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public void setIsin(String isin) {
+		this.isin = isin;
+	}
+
+	public String getPaymentCurrencyCode() {
+		return paymentCurrencyCode;
+	}
+
+	public void setPaymentCurrencyCode(String paymentCurrencyCode) {
+		this.paymentCurrencyCode = paymentCurrencyCode;
+	}
+
+	public Double getTransactionPrice() {
+		return transactionPrice;
+	}
+
+	public void setTransactionPrice(Double transactionPrice) {
+		this.transactionPrice = transactionPrice;
+	}
+
+	public Double getForwardPrice() {
+		return forwardPrice;
+	}
+
+	public void setForwardPrice(Double forwardPrice) {
+		this.forwardPrice = forwardPrice;
+	}
+
+	public Double getIntDivQC() {
+		return intDivQC;
+	}
+
+	public void setIntDivQC(Double intDivQC) {
+		this.intDivQC = intDivQC;
+	}
+
+	public Double getCurrentValueQC() {
+		return currentValueQC;
+	}
+
+	public void setCurrentValueQC(Double currentValueQC) {
+		this.currentValueQC = currentValueQC;
+	}
+
+	public Double getForwardCurrentValueQC() {
+		return forwardCurrentValueQC;
+	}
+
+	public void setForwardCurrentValueQC(Double forwardCurrentValueQC) {
+		this.forwardCurrentValueQC = forwardCurrentValueQC;
+	}
+
+	public Double getPaymentAmountQC() {
+		return paymentAmountQC;
+	}
+
+	public void setPaymentAmountQC(Double paymentAmountQC) {
+		this.paymentAmountQC = paymentAmountQC;
+	}
+
+	public Double getAccruedInterestQC() {
+		return accruedInterestQC;
+	}
+
+	public void setAccruedInterestQC(Double accruedInterestQC) {
+		this.accruedInterestQC = accruedInterestQC;
+	}
+
+	public String getBusinessTransactionCode() {
+		return businessTransactionCode;
+	}
+
+	public void setBusinessTransactionCode(String businessTransactionCode) {
+		this.businessTransactionCode = businessTransactionCode;
+	}
+
+	public String getElementTransactionCode() {
+		return elementTransactionCode;
+	}
+
+	public void setElementTransactionCode(String elementTransactionCode) {
+		this.elementTransactionCode = elementTransactionCode;
+	}
+
+	public String getCounterpart() {
+		return counterpart;
+	}
+
+	public void setCounterpart(String counterpart) {
+		this.counterpart = counterpart;
+	}
+
+	public String getBankAccount() {
+		return bankAccount;
+	}
+
+	public void setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+
+	public String getModelPortfolio() {
+		return modelPortfolio;
+	}
+
+	public void setModelPortfolio(String modelPortfolio) {
+		this.modelPortfolio = modelPortfolio;
+	}
+
+	public Double getTransactionNumber() {
+		return transactionNumber;
+	}
+
+	public void setTransactionNumber(Double transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
+
+	public Double getPriceT() {
+		return priceT;
+	}
+
+	public void setPriceT(Double priceT) {
+		this.priceT = priceT;
+	}
+
+	public Double getFxQC() {
+		return fxQC;
+	}
+
+	public void setFxQC(Double fxQC) {
+		this.fxQC = fxQC;
+	}
+
+	public String getPortfolioCurrencyCode() {
+		return portfolioCurrencyCode;
+	}
+
+	public void setPortfolioCurrencyCode(String portfolioCurrencyCode) {
+		this.portfolioCurrencyCode = portfolioCurrencyCode;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public Double getPriceT1() {
+		return priceT1;
+	}
+
+	public void setPriceT1(Double priceT1) {
+		this.priceT1 = priceT1;
+	}
+
+	public Double getFxQC1() {
+		return fxQC1;
+	}
+
+	public void setFxQC1(Double fxQC1) {
+		this.fxQC1 = fxQC1;
+	}
+
+	public Double getPaymentAmountPC() {
+		return paymentAmountPC;
+	}
+
+	public void setPaymentAmountPC(Double paymentAmountPC) {
+		this.paymentAmountPC = paymentAmountPC;
+	}
+
+}	
+
+ValuationsStagingDAO.class
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2016 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/trunk/src/main/java/com/vanguard/corp/ics/dao/staging/ValuationsStagingDAO.java $
+ $LastChangedRevision: 595497 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-09-11 23:39:45 -0400 (Mon, 11 Sep 2017) $
+*/
+package com.vanguard.corp.ics.dao.staging;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.dao.FileDAO;
+import com.vanguard.corp.ics.dao.PortfolioDAO;
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+@Entity
+@Table(name = "SDLSADM.TSCD_VALUTN_FILE")
+public class ValuationsStagingDAO implements PortfolioDAO<Long>, FileDAO<Long> {
+
+	private static final long serialVersionUID = -1540114032167233651L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDLSADM.SEQ1SCDVALUTNFILEID")
+	@SequenceGenerator(name = "SDLSADM.SEQ1SCDVALUTNFILEID", sequenceName = "SDLSADM.SEQ1SCDVALUTNFILEID", initialValue = 1, allocationSize = 100)
+	@Column(name = "SCD_VALUTN_FILE_ID", unique = true, nullable = false)
+	private Long id;
+
+	@ManyToOne(cascade = { CascadeType.MERGE })
+	@JoinColumn(name = "DATA_SRC_FILE_ID")
+	private DatasourceFileDAO datasourceFileDAO;
+
+	@Column(name = "RUN_DTTM", nullable = false)
+	private Date runDateTime;
+
+	@Column(name = "VAL_DT", nullable = false)
+	private Date valueDate;
+
+	@Column(name = "PORT_CD", nullable = false)
+	private String portfolioCode;
+
+	@Column(name = "EQTY_VAL")
+	private Double equityValue;
+
+	@Column(name = "FUT_VAL")
+	private Double futuresValue;
+
+	@Column(name = "FXD_INT_VAL")
+	private Double fixedInterestValue;
+
+	@Column(name = "FFX_VAL")
+	private Double forwardForiegnExchangeValue;
+
+	@Column(name = "LQDITY_VAL")
+	private Double liquidityValue;
+
+	@Column(name = "DERIVATIVE_VAL")
+	private Double derivitivesValue;
+
+	@Column(name = "TOT_VAL")
+	private Double totalValue;
+
+	@Column(name = "CREATD_BY_USER_ID", nullable = true, insertable = false)
+	private String createdUser;
+
+	@Column(name = "CREATD_DT", nullable = true, insertable = false)
+	private Date createdDate;
+
+	@Column(name = "LST_UPDTD_USER_ID", nullable = true, insertable = false)
+	private String updatedUser;
+
+	@Column(name = "LST_UPDTD_TS", nullable = true, insertable = false)
+	private Date updatedDate;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getRunDateTime() {
+		return runDateTime;
+	}
+
+	public void setRunDateTime(Date runDateTime) {
+		this.runDateTime = runDateTime;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	@Override
+	public String getPortfolioCode() {
+		return portfolioCode;
+	}
+
+	@Override
+	public void setPortfolioCode(String portfolioCode) {
+		this.portfolioCode = portfolioCode;
+	}
+
+	@Override
+	public DatasourceFileDAO getDatasourceFileDAO() {
+		return datasourceFileDAO;
+	}
+
+	@Override
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO) {
+		this.datasourceFileDAO = datasourceFileDAO;
+	}
+
+	public Double getEquityValue() {
+		return equityValue;
+	}
+
+	public void setEquityValue(Double equityValue) {
+		this.equityValue = equityValue;
+	}
+
+	public Double getFuturesValue() {
+		return futuresValue;
+	}
+
+	public void setFuturesValue(Double futureValue) {
+		this.futuresValue = futureValue;
+	}
+
+	public Double getFixedInterestValue() {
+		return fixedInterestValue;
+	}
+
+	public void setFixedInterestValue(Double fixedInterestValue) {
+		this.fixedInterestValue = fixedInterestValue;
+	}
+
+	public Double getForwardForiegnExchangeValue() {
+		return forwardForiegnExchangeValue;
+	}
+
+	public void setForwardForiegnExchangeValue(Double forwardForiegnExchangeValue) {
+		this.forwardForiegnExchangeValue = forwardForiegnExchangeValue;
+	}
+
+	public Double getLiquidityValue() {
+		return liquidityValue;
+	}
+
+	public void setLiquidityValue(Double liquidityValue) {
+		this.liquidityValue = liquidityValue;
+	}
+
+	public Double getDerivitivesValue() {
+		return derivitivesValue;
+	}
+
+	public void setDerivitivesValue(Double derivitiveValue) {
+		this.derivitivesValue = derivitiveValue;
+	}
+
+	public Double getTotalValue() {
+		return totalValue;
+	}
+
+	public void setTotalValue(Double totalValue) {
+		this.totalValue = totalValue;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	@Override
+	public String toString() {
+		return "ValuationsStagingDAO [runDateTime=" + runDateTime + ", valueDate=" + valueDate + ", portfolioCode="
+				+ portfolioCode + ", equityValue=" + equityValue + ", totalValue=" + totalValue + "]";
+	}
+
+}
+
+com.vanguard.corp.ics.dao.target
+	AttributionBelowTargetDAO.class
+// Compiled from AttributionBelowTargetDAO.java (version 1.8 : 52.0, super bit)
+// Signature: Ljava/lang/Object;Lcom/vanguard/corp/ics/dao/PortfolioDAO<Ljava/lang/Long;>;Lcom/vanguard/corp/ics/dao/ReportingDAO<Ljava/lang/Long;>;Lcom/vanguard/corp/ics/dao/EffectiveExpiryDateDAO<Ljava/lang/Long;>;
+@javax.persistence.Entity
+@javax.persistence.Table(name="SDLTADM.TATTRTN_BW_DATA")
+public class com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO implements com.vanguard.corp.ics.dao.PortfolioDAO, com.vanguard.corp.ics.dao.ReportingDAO, com.vanguard.corp.ics.dao.EffectiveExpiryDateDAO {
+  
+  // Field descriptor #36 J
+  private static final long serialVersionUID = 265023419909974405L;
+  
+  // Field descriptor #41 Ljava/lang/Long;
+  @javax.persistence.Id
+  @javax.persistence.GeneratedValue(strategy=javax.persistence.GenerationType.SEQUENCE,
+    generator="SDLTADM.SEQ1ATTRTNBWDATAID")
+  @javax.persistence.SequenceGenerator(name="SDLTADM.SEQ1ATTRTNBWDATAID",
+    sequenceName="SDLTADM.SEQ1ATTRTNBWDATAID",
+    initialValue=(int) 1,
+    allocationSize=(int) 100)
+  @javax.persistence.Column(name="ATTRTN_BW_DATA_ID",
+    unique=true,
+    nullable=false)
+  private java.lang.Long id;
+  
+  // Field descriptor #63 Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;
+  @javax.persistence.ManyToOne
+  @javax.persistence.JoinColumn(name="DATA_SRC_FILE_ID")
+  private com.vanguard.corp.ics.dao.target.DatasourceFileDAO datasourceFileDAO;
+  
+  // Field descriptor #68 Ljava/lang/String;
+  @javax.persistence.Column(name="PORT_CD",
+    nullable=false)
+  private java.lang.String portfolioCode;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="CAL_MM_END",
+    nullable=false)
+  private java.util.Date calendarMonthEnd;
+  
+  // Field descriptor #68 Ljava/lang/String;
+  @javax.persistence.Column(name="ATTRTN_CD",
+    nullable=false)
+  private java.lang.String attributeCode;
+  
+  // Field descriptor #76 Ljava/math/BigDecimal;
+  @javax.persistence.Column(name="FND_VAL",
+    precision=(int) 38,
+    scale=(int) 26)
+  private java.math.BigDecimal value;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="CREATN_DT",
+    nullable=false)
+  private java.util.Date creationDate;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="EFFTV_DT",
+    nullable=false)
+  private java.util.Date effectiveDate;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="EXPIRN_DT",
+    nullable=true)
+  private java.util.Date expiryDate;
+  
+  // Field descriptor #68 Ljava/lang/String;
+  @javax.persistence.Column(name="CREATD_BY_USER_ID",
+    nullable=true,
+    insertable=false)
+  private java.lang.String createdUser;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="CREATD_DT",
+    nullable=true,
+    insertable=false)
+  private java.util.Date createdDate;
+  
+  // Field descriptor #68 Ljava/lang/String;
+  @javax.persistence.Column(name="LST_UPDTD_USER_ID",
+    nullable=true,
+    insertable=false)
+  private java.lang.String updatedUser;
+  
+  // Field descriptor #71 Ljava/util/Date;
+  @javax.persistence.Column(name="LST_UPDTD_TS",
+    nullable=true,
+    insertable=false)
+  private java.util.Date updatedDate;
+  
+  // Method descriptor #98 ()V
+  // Stack: 1, Locals: 1
+  public AttributionBelowTargetDAO();
+    0  aload_0 [this]
+    1  invokespecial java.lang.Object() [1]
+    4  return
+      Line numbers:
+        [pc: 0, line: 41]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #105 ()Ljava/lang/Long;
+  // Stack: 1, Locals: 1
+  public java.lang.Long getId();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.id : java.lang.Long [2]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 90]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #107 (Ljava/lang/Long;)V
+  // Stack: 2, Locals: 2
+  public void setId(java.lang.Long id);
+    0  aload_0 [this]
+    1  aload_1 [id]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.id : java.lang.Long [2]
+    5  return
+      Line numbers:
+        [pc: 0, line: 95]
+        [pc: 5, line: 96]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: id index: 1 type: java.lang.Long
+  
+  // Method descriptor #109 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getPortfolioCode();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.portfolioCode : java.lang.String [3]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 100]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #111 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setPortfolioCode(java.lang.String portfolioCode);
+    0  aload_0 [this]
+    1  aload_1 [portfolioCode]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.portfolioCode : java.lang.String [3]
+    5  return
+      Line numbers:
+        [pc: 0, line: 105]
+        [pc: 5, line: 106]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: portfolioCode index: 1 type: java.lang.String
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getCalendarMonthEnd();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.calendarMonthEnd : java.util.Date [4]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 109]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #115 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setCalendarMonthEnd(java.util.Date calendarMonthEnd);
+    0  aload_0 [this]
+    1  aload_1 [calendarMonthEnd]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.calendarMonthEnd : java.util.Date [4]
+    5  return
+      Line numbers:
+        [pc: 0, line: 113]
+        [pc: 5, line: 114]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: calendarMonthEnd index: 1 type: java.util.Date
+  
+  // Method descriptor #109 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getAttributeCode();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.attributeCode : java.lang.String [5]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 117]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #111 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setAttributeCode(java.lang.String attributeCode);
+    0  aload_0 [this]
+    1  aload_1 [attributeCode]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.attributeCode : java.lang.String [5]
+    5  return
+      Line numbers:
+        [pc: 0, line: 121]
+        [pc: 5, line: 122]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: attributeCode index: 1 type: java.lang.String
+  
+  // Method descriptor #119 ()Ljava/math/BigDecimal;
+  // Stack: 1, Locals: 1
+  public java.math.BigDecimal getValue();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.value : java.math.BigDecimal [6]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 125]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #121 (Ljava/math/BigDecimal;)V
+  // Stack: 2, Locals: 2
+  public void setValue(java.math.BigDecimal value);
+    0  aload_0 [this]
+    1  aload_1 [value]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.value : java.math.BigDecimal [6]
+    5  return
+      Line numbers:
+        [pc: 0, line: 129]
+        [pc: 5, line: 130]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: value index: 1 type: java.math.BigDecimal
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getCreationDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.creationDate : java.util.Date [7]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 133]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #115 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setCreationDate(java.util.Date creationDate);
+    0  aload_0 [this]
+    1  aload_1 [creationDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.creationDate : java.util.Date [7]
+    5  return
+      Line numbers:
+        [pc: 0, line: 137]
+        [pc: 5, line: 138]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: creationDate index: 1 type: java.util.Date
+  
+  // Method descriptor #109 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getCreatedUser();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.createdUser : java.lang.String [8]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 141]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #111 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setCreatedUser(java.lang.String createdUser);
+    0  aload_0 [this]
+    1  aload_1 [createdUser]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.createdUser : java.lang.String [8]
+    5  return
+      Line numbers:
+        [pc: 0, line: 145]
+        [pc: 5, line: 146]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: createdUser index: 1 type: java.lang.String
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getCreatedDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.createdDate : java.util.Date [9]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 149]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #115 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setCreatedDate(java.util.Date createdDate);
+    0  aload_0 [this]
+    1  aload_1 [createdDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.createdDate : java.util.Date [9]
+    5  return
+      Line numbers:
+        [pc: 0, line: 153]
+        [pc: 5, line: 154]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: createdDate index: 1 type: java.util.Date
+  
+  // Method descriptor #109 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getUpdatedUser();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.updatedUser : java.lang.String [10]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 157]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #111 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setUpdatedUser(java.lang.String updatedUser);
+    0  aload_0 [this]
+    1  aload_1 [updatedUser]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.updatedUser : java.lang.String [10]
+    5  return
+      Line numbers:
+        [pc: 0, line: 161]
+        [pc: 5, line: 162]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: updatedUser index: 1 type: java.lang.String
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getUpdatedDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.updatedDate : java.util.Date [11]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 165]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #115 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setUpdatedDate(java.util.Date updatedDate);
+    0  aload_0 [this]
+    1  aload_1 [updatedDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.updatedDate : java.util.Date [11]
+    5  return
+      Line numbers:
+        [pc: 0, line: 169]
+        [pc: 5, line: 170]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: updatedDate index: 1 type: java.util.Date
+  
+  // Method descriptor #133 ()Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;
+  // Stack: 1, Locals: 1
+  public com.vanguard.corp.ics.dao.target.DatasourceFileDAO getDatasourceFileDAO();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [12]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 173]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #135 (Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;)V
+  // Stack: 2, Locals: 2
+  public void setDatasourceFileDAO(com.vanguard.corp.ics.dao.target.DatasourceFileDAO datasourceFileDAO);
+    0  aload_0 [this]
+    1  aload_1 [datasourceFileDAO]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [12]
+    5  return
+      Line numbers:
+        [pc: 0, line: 177]
+        [pc: 5, line: 178]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 6] local: datasourceFileDAO index: 1 type: com.vanguard.corp.ics.dao.target.DatasourceFileDAO
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getEffectiveDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.effectiveDate : java.util.Date [13]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 182]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #138 (Ljava/util/Date;)Lcom/vanguard/corp/ics/dao/DAO;
+  // Signature: (Ljava/util/Date;)Lcom/vanguard/corp/ics/dao/DAO<Ljava/lang/Long;>;
+  // Stack: 2, Locals: 2
+  public com.vanguard.corp.ics.dao.DAO setEffectiveDate(java.util.Date effectiveDate);
+    0  aload_0 [this]
+    1  aload_1 [effectiveDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.effectiveDate : java.util.Date [13]
+    5  aload_0 [this]
+    6  areturn
+      Line numbers:
+        [pc: 0, line: 187]
+        [pc: 5, line: 188]
+      Local variable table:
+        [pc: 0, pc: 7] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 7] local: effectiveDate index: 1 type: java.util.Date
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getExpiryDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.expiryDate : java.util.Date [14]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 193]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #138 (Ljava/util/Date;)Lcom/vanguard/corp/ics/dao/DAO;
+  // Signature: (Ljava/util/Date;)Lcom/vanguard/corp/ics/dao/DAO<Ljava/lang/Long;>;
+  // Stack: 2, Locals: 2
+  public com.vanguard.corp.ics.dao.DAO setExpiryDate(java.util.Date expiryDate);
+    0  aload_0 [this]
+    1  aload_1 [expiryDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.expiryDate : java.util.Date [14]
+    5  aload_0 [this]
+    6  areturn
+      Line numbers:
+        [pc: 0, line: 198]
+        [pc: 5, line: 199]
+      Local variable table:
+        [pc: 0, pc: 7] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+        [pc: 0, pc: 7] local: expiryDate index: 1 type: java.util.Date
+  
+  // Method descriptor #113 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getReportingDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.calendarMonthEnd : java.util.Date [4]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 204]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #109 ()Ljava/lang/String;
+  // Stack: 2, Locals: 1
+  public java.lang.String toString();
+     0  new java.lang.StringBuilder [15]
+     3  dup
+     4  invokespecial java.lang.StringBuilder() [16]
+     7  ldc <String "AttirubtionBelowTargetDAO [id="> [17]
+     9  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    12  aload_0 [this]
+    13  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.id : java.lang.Long [2]
+    16  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [19]
+    19  ldc <String ", datasourceFileDAO="> [20]
+    21  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    24  aload_0 [this]
+    25  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [12]
+    28  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [19]
+    31  ldc <String ", portfolioCode="> [21]
+    33  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    36  aload_0 [this]
+    37  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.portfolioCode : java.lang.String [3]
+    40  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    43  ldc <String ", calendarMonthEnd="> [22]
+    45  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    48  aload_0 [this]
+    49  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.calendarMonthEnd : java.util.Date [4]
+    52  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [19]
+    55  ldc <String ", attributeCode="> [23]
+    57  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    60  aload_0 [this]
+    61  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.attributeCode : java.lang.String [5]
+    64  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    67  ldc <String ", value="> [24]
+    69  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    72  aload_0 [this]
+    73  getfield com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.value : java.math.BigDecimal [6]
+    76  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [19]
+    79  ldc <String "]"> [25]
+    81  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [18]
+    84  invokevirtual java.lang.StringBuilder.toString() : java.lang.String [26]
+    87  areturn
+      Line numbers:
+        [pc: 0, line: 209]
+      Local variable table:
+        [pc: 0, pc: 88] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #145 (Ljava/lang/Number;)V
+  // Stack: 2, Locals: 2
+  public bridge synthetic void setId(java.lang.Number arg0);
+    0  aload_0 [this]
+    1  aload_1 [arg0]
+    2  checkcast java.lang.Long [27]
+    5  invokevirtual com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.setId(java.lang.Long) : void [28]
+    8  return
+      Line numbers:
+        [pc: 0, line: 39]
+      Local variable table:
+        [pc: 0, pc: 9] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+  
+  // Method descriptor #146 ()Ljava/lang/Number;
+  // Stack: 1, Locals: 1
+  public bridge synthetic java.lang.Number getId();
+    0  aload_0 [this]
+    1  invokevirtual com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO.getId() : java.lang.Long [29]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 39]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionBelowTargetDAO
+
+}
+
+AttributionTargetDAO.class
+// Compiled from AttributionTargetDAO.java (version 1.8 : 52.0, super bit)
+// Signature: Ljava/lang/Object;Lcom/vanguard/corp/ics/dao/PortfolioDAO<Ljava/lang/Long;>;
+@javax.persistence.Entity
+@javax.persistence.Table(name="SDLTADM.TATTRTN_SUM")
+public class com.vanguard.corp.ics.dao.target.AttributionTargetDAO implements com.vanguard.corp.ics.dao.PortfolioDAO {
+  
+  // Field descriptor #32 J
+  private static final long serialVersionUID = 365023419909974405L;
+  
+  // Field descriptor #37 Ljava/lang/Long;
+  @javax.persistence.Id
+  @javax.persistence.GeneratedValue(strategy=javax.persistence.GenerationType.SEQUENCE,
+    generator="SDLTADM.SEQ1ATTRTNSUMID")
+  @javax.persistence.SequenceGenerator(name="SDLTADM.SEQ1ATTRTNSUMID",
+    sequenceName="SDLTADM.SEQ1ATTRTNSUMID",
+    initialValue=(int) 1,
+    allocationSize=(int) 100)
+  @javax.persistence.Column(name="ATTRTN_SUM_ID",
+    unique=true,
+    nullable=false)
+  private java.lang.Long id;
+  
+  // Field descriptor #59 Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;
+  @javax.persistence.ManyToOne
+  @javax.persistence.JoinColumn(name="DATA_SRC_FILE_ID")
+  private com.vanguard.corp.ics.dao.target.DatasourceFileDAO datasourceFileDAO;
+  
+  // Field descriptor #64 Ljava/lang/String;
+  @javax.persistence.Column(name="PORT_ID",
+    nullable=false)
+  private java.lang.String portfolioCode;
+  
+  // Field descriptor #67 Ljava/util/Date;
+  @javax.persistence.Column(name="EFFTV_DT",
+    nullable=false)
+  private java.util.Date effectiveDate;
+  
+  // Field descriptor #64 Ljava/lang/String;
+  @javax.persistence.Column(name="ATTRTN_NM",
+    nullable=false)
+  private java.lang.String attrtnName;
+  
+  // Field descriptor #64 Ljava/lang/String;
+  @javax.persistence.Column(name="ATTRTN_TYP_CD",
+    nullable=false)
+  private java.lang.String attrtnTypeCd;
+  
+  // Field descriptor #74 Ljava/math/BigDecimal;
+  @javax.persistence.Column(name="ATTRTN_TYP_VAL",
+    nullable=true)
+  private java.math.BigDecimal attrtnTypeVal;
+  
+  // Field descriptor #64 Ljava/lang/String;
+  @javax.persistence.Column(name="CREATD_BY_USER_ID",
+    nullable=false,
+    insertable=false)
+  private java.lang.String createdUser;
+  
+  // Field descriptor #67 Ljava/util/Date;
+  @javax.persistence.Column(name="CREATD_DT",
+    nullable=false,
+    insertable=false)
+  private java.util.Date createdDate;
+  
+  // Field descriptor #64 Ljava/lang/String;
+  @javax.persistence.Column(name="LST_UPDTD_USER_ID",
+    nullable=false,
+    insertable=false)
+  private java.lang.String updatedUser;
+  
+  // Field descriptor #67 Ljava/util/Date;
+  @javax.persistence.Column(name="LST_UPDTD_TS",
+    nullable=false,
+    insertable=false)
+  private java.util.Date updatedDate;
+  
+  // Method descriptor #86 ()V
+  // Stack: 1, Locals: 1
+  public AttributionTargetDAO();
+    0  aload_0 [this]
+    1  invokespecial java.lang.Object() [1]
+    4  return
+      Line numbers:
+        [pc: 0, line: 38]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #93 ()Ljava/lang/Long;
+  // Stack: 1, Locals: 1
+  public java.lang.Long getId();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.id : java.lang.Long [2]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 81]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #95 (Ljava/lang/Long;)V
+  // Stack: 2, Locals: 2
+  public void setId(java.lang.Long id);
+    0  aload_0 [this]
+    1  aload_1 [id]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.id : java.lang.Long [2]
+    5  return
+      Line numbers:
+        [pc: 0, line: 86]
+        [pc: 5, line: 87]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: id index: 1 type: java.lang.Long
+  
+  // Method descriptor #97 ()Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;
+  // Stack: 1, Locals: 1
+  public com.vanguard.corp.ics.dao.target.DatasourceFileDAO getDatasourceFileDAO();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [3]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 90]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #99 (Lcom/vanguard/corp/ics/dao/target/DatasourceFileDAO;)V
+  // Stack: 2, Locals: 2
+  public void setDatasourceFileDAO(com.vanguard.corp.ics.dao.target.DatasourceFileDAO datasourceFileDAO);
+    0  aload_0 [this]
+    1  aload_1 [datasourceFileDAO]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [3]
+    5  return
+      Line numbers:
+        [pc: 0, line: 94]
+        [pc: 5, line: 95]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: datasourceFileDAO index: 1 type: com.vanguard.corp.ics.dao.target.DatasourceFileDAO
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getPortfolioCode();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.portfolioCode : java.lang.String [4]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 99]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #103 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setPortfolioCode(java.lang.String portId);
+    0  aload_0 [this]
+    1  aload_1 [portId]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.portfolioCode : java.lang.String [4]
+    5  return
+      Line numbers:
+        [pc: 0, line: 104]
+        [pc: 5, line: 105]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: portId index: 1 type: java.lang.String
+  
+  // Method descriptor #106 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getEffectiveDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.effectiveDate : java.util.Date [5]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 108]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #108 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setEffectiveDate(java.util.Date effectiveDate);
+    0  aload_0 [this]
+    1  aload_1 [effectiveDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.effectiveDate : java.util.Date [5]
+    5  return
+      Line numbers:
+        [pc: 0, line: 112]
+        [pc: 5, line: 113]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: effectiveDate index: 1 type: java.util.Date
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getAttrtnName();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnName : java.lang.String [6]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 116]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #103 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setAttrtnName(java.lang.String attrtnName);
+    0  aload_0 [this]
+    1  aload_1 [attrtnName]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnName : java.lang.String [6]
+    5  return
+      Line numbers:
+        [pc: 0, line: 120]
+        [pc: 5, line: 121]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: attrtnName index: 1 type: java.lang.String
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getAttrtnTypeCd();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeCd : java.lang.String [7]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 124]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #103 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setAttrtnTypeCd(java.lang.String attrtnTypeCd);
+    0  aload_0 [this]
+    1  aload_1 [attrtnTypeCd]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeCd : java.lang.String [7]
+    5  return
+      Line numbers:
+        [pc: 0, line: 128]
+        [pc: 5, line: 129]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: attrtnTypeCd index: 1 type: java.lang.String
+  
+  // Method descriptor #114 ()Ljava/math/BigDecimal;
+  // Stack: 1, Locals: 1
+  public java.math.BigDecimal getAttrtnTypeVal();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeVal : java.math.BigDecimal [8]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 132]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #116 (Ljava/math/BigDecimal;)V
+  // Stack: 2, Locals: 2
+  public void setAttrtnTypeVal(java.math.BigDecimal attrtnTypeVal);
+    0  aload_0 [this]
+    1  aload_1 [attrtnTypeVal]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeVal : java.math.BigDecimal [8]
+    5  return
+      Line numbers:
+        [pc: 0, line: 136]
+        [pc: 5, line: 137]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: attrtnTypeVal index: 1 type: java.math.BigDecimal
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getCreatedUser();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.createdUser : java.lang.String [9]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 140]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #103 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setCreatedUser(java.lang.String createdUser);
+    0  aload_0 [this]
+    1  aload_1 [createdUser]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.createdUser : java.lang.String [9]
+    5  return
+      Line numbers:
+        [pc: 0, line: 144]
+        [pc: 5, line: 145]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: createdUser index: 1 type: java.lang.String
+  
+  // Method descriptor #106 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getCreatedDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.createdDate : java.util.Date [10]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 148]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #108 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setCreatedDate(java.util.Date createdDate);
+    0  aload_0 [this]
+    1  aload_1 [createdDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.createdDate : java.util.Date [10]
+    5  return
+      Line numbers:
+        [pc: 0, line: 152]
+        [pc: 5, line: 153]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: createdDate index: 1 type: java.util.Date
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 1, Locals: 1
+  public java.lang.String getUpdatedUser();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.updatedUser : java.lang.String [11]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 156]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #103 (Ljava/lang/String;)V
+  // Stack: 2, Locals: 2
+  public void setUpdatedUser(java.lang.String updatedUser);
+    0  aload_0 [this]
+    1  aload_1 [updatedUser]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.updatedUser : java.lang.String [11]
+    5  return
+      Line numbers:
+        [pc: 0, line: 160]
+        [pc: 5, line: 161]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: updatedUser index: 1 type: java.lang.String
+  
+  // Method descriptor #106 ()Ljava/util/Date;
+  // Stack: 1, Locals: 1
+  public java.util.Date getUpdatedDate();
+    0  aload_0 [this]
+    1  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.updatedDate : java.util.Date [12]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 164]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #108 (Ljava/util/Date;)V
+  // Stack: 2, Locals: 2
+  public void setUpdatedDate(java.util.Date updatedDate);
+    0  aload_0 [this]
+    1  aload_1 [updatedDate]
+    2  putfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.updatedDate : java.util.Date [12]
+    5  return
+      Line numbers:
+        [pc: 0, line: 168]
+        [pc: 5, line: 169]
+      Local variable table:
+        [pc: 0, pc: 6] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+        [pc: 0, pc: 6] local: updatedDate index: 1 type: java.util.Date
+  
+  // Method descriptor #101 ()Ljava/lang/String;
+  // Stack: 2, Locals: 1
+  public java.lang.String toString();
+     0  new java.lang.StringBuilder [13]
+     3  dup
+     4  invokespecial java.lang.StringBuilder() [14]
+     7  ldc <String "AttributionTargetDAO [id="> [15]
+     9  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    12  aload_0 [this]
+    13  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.id : java.lang.Long [2]
+    16  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [17]
+    19  ldc <String ", datasourceFileDAO="> [18]
+    21  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    24  aload_0 [this]
+    25  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.datasourceFileDAO : com.vanguard.corp.ics.dao.target.DatasourceFileDAO [3]
+    28  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [17]
+    31  ldc <String ", PortId="> [19]
+    33  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    36  aload_0 [this]
+    37  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.portfolioCode : java.lang.String [4]
+    40  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    43  ldc <String ", EffectiveDate="> [20]
+    45  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    48  aload_0 [this]
+    49  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.effectiveDate : java.util.Date [5]
+    52  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [17]
+    55  ldc <String ", AttributionCode="> [21]
+    57  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    60  aload_0 [this]
+    61  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeCd : java.lang.String [7]
+    64  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    67  ldc <String ", AttributionTypeValue="> [22]
+    69  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    72  aload_0 [this]
+    73  getfield com.vanguard.corp.ics.dao.target.AttributionTargetDAO.attrtnTypeVal : java.math.BigDecimal [8]
+    76  invokevirtual java.lang.StringBuilder.append(java.lang.Object) : java.lang.StringBuilder [17]
+    79  ldc <String "]"> [23]
+    81  invokevirtual java.lang.StringBuilder.append(java.lang.String) : java.lang.StringBuilder [16]
+    84  invokevirtual java.lang.StringBuilder.toString() : java.lang.String [24]
+    87  areturn
+      Line numbers:
+        [pc: 0, line: 173]
+      Local variable table:
+        [pc: 0, pc: 88] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #126 (Ljava/lang/Number;)V
+  // Stack: 2, Locals: 2
+  public bridge synthetic void setId(java.lang.Number arg0);
+    0  aload_0 [this]
+    1  aload_1 [arg0]
+    2  checkcast java.lang.Long [25]
+    5  invokevirtual com.vanguard.corp.ics.dao.target.AttributionTargetDAO.setId(java.lang.Long) : void [26]
+    8  return
+      Line numbers:
+        [pc: 0, line: 36]
+      Local variable table:
+        [pc: 0, pc: 9] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+  
+  // Method descriptor #127 ()Ljava/lang/Number;
+  // Stack: 1, Locals: 1
+  public bridge synthetic java.lang.Number getId();
+    0  aload_0 [this]
+    1  invokevirtual com.vanguard.corp.ics.dao.target.AttributionTargetDAO.getId() : java.lang.Long [27]
+    4  areturn
+      Line numbers:
+        [pc: 0, line: 36]
+      Local variable table:
+        [pc: 0, pc: 5] local: this index: 0 type: com.vanguard.corp.ics.dao.target.AttributionTargetDAO
+
+}
+
+CalculationConfigurationDAO.class
+package com.vanguard.corp.ics.dao.target;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.enums.CalculationConfigEnum;
+
+/**
+ * The persistent class for the TCALC_CONFIG database table.
+ *
+ */
+@Entity
+@Table(name = "SDLTADM.TCALC_CONFIG")
+public class CalculationConfigurationDAO implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@SequenceGenerator(name = "TCALC_CONFIG_CALCCONFIGID_GENERATOR", sequenceName = "SDLTADM.SEQ1CALCONFIGID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TCALC_CONFIG_CALCCONFIGID_GENERATOR")
+	@Column(name = "CALC_CONFIG_ID")
+	private long calcConfigId;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "CALC_CONFIG")
+	private CalculationConfigEnum calcConfig;
+
+	// bi-directional many-to-many association to TdataSrc
+	@ManyToMany
+	@JoinTable(name = "SDLTADM.TCCONF_DS_JOIN", joinColumns = {
+			@JoinColumn(name = "CALC_CONFIG_ID_FK")
+	}, inverseJoinColumns = {
+			@JoinColumn(name = "DATA_SRC_ID_FK")
+	})
+	private List<DatasourceDAO> tdataSrcs;
+
+	// bi-directional many-to-one association to TcalcRun
+	@OneToMany(mappedBy = "tcalcConfig")
+	private List<CalculationRunDAO> tcalcRuns;
+
+	public CalculationConfigurationDAO() {
+	}
+
+	public long getCalcConfigId() {
+		return this.calcConfigId;
+	}
+
+	public void setCalcConfigId(long calcConfigId) {
+		this.calcConfigId = calcConfigId;
+	}
+
+	public CalculationConfigEnum getCalcConfig() {
+		return this.calcConfig;
+	}
+
+	public void setCalcConfig(CalculationConfigEnum calcConfig) {
+		this.calcConfig = calcConfig;
+	}
+
+	public List<DatasourceDAO> getTdataSrcs() {
+		return this.tdataSrcs;
+	}
+
+	public void setTdataSrcs(List<DatasourceDAO> tdataSrcs) {
+		this.tdataSrcs = tdataSrcs;
+	}
+
+	public List<CalculationRunDAO> getTcalcRuns() {
+		return this.tcalcRuns;
+	}
+
+	public void setTcalcRuns(List<CalculationRunDAO> tcalcRuns) {
+		this.tcalcRuns = tcalcRuns;
+	}
+
+	public CalculationRunDAO addTcalcRun(CalculationRunDAO tcalcRun) {
+		getTcalcRuns().add(tcalcRun);
+		tcalcRun.setTcalcConfig(this);
+
+		return tcalcRun;
+	}
+
+	public CalculationRunDAO removeTcalcRun(CalculationRunDAO tcalcRun) {
+		getTcalcRuns().remove(tcalcRun);
+		tcalcRun.setTcalcConfig(null);
+
+		return tcalcRun;
+	}
+
+}
+
+				

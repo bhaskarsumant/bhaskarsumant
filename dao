@@ -1,0 +1,419 @@
+AttributionTargetDAO
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/branches/1.0.1/src/main/java/com/vanguard/corp/ics/dao/target/AttributionTargetDAO.java $
+ $LastChangedRevision: 606249 $
+ $Author: um2a $
+ $LastChangedDate: 2017-10-26 10:26:04 -0400 (Thu, 26 Oct 2017) $
+*/
+package com.vanguard.corp.ics.dao.target;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import com.vanguard.corp.ics.dao.PortfolioDAO;
+
+@Entity
+@Table(name = "SDLTADM.TATTRTN_SUM")
+public class AttributionTargetDAO implements PortfolioDAO<Long> {
+
+	private static final long serialVersionUID = 365023419909974405L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDLTADM.SEQ1ATTRTNSUMID")
+	@SequenceGenerator(name = "SDLTADM.SEQ1ATTRTNSUMID", sequenceName = "SDLTADM.SEQ1ATTRTNSUMID", initialValue = 1, allocationSize = 100)
+	@Column(name = "ATTRTN_SUM_ID", unique = true, nullable = false)
+	private Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "DATA_SRC_FILE_ID")
+	private DatasourceFileDAO datasourceFileDAO;
+
+	@Column(name = "PORT_ID", nullable = false)
+	private String portfolioCode;
+
+	@Column(name = "EFFTV_DT", nullable = false)
+	private Date effectiveDate;
+
+	@Column(name = "ATTRTN_NM", nullable = false)
+	private String attrtnName;
+
+	@Column(name = "ATTRTN_TYP_CD", nullable = false)
+	private String attrtnTypeCd;
+
+	@Column(name = "ATTRTN_TYP_VAL", nullable = true)
+	private BigDecimal attrtnTypeVal;
+
+	@Column(name = "CREATD_BY_USER_ID", nullable = false, insertable = false)
+	private String createdUser;
+
+	@Column(name = "CREATD_DT", nullable = false, insertable = false)
+	private Date createdDate;
+
+	@Column(name = "LST_UPDTD_USER_ID", nullable = false, insertable = false)
+	private String updatedUser;
+
+	@Column(name = "LST_UPDTD_TS", nullable = false, insertable = false)
+	private Date updatedDate;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public DatasourceFileDAO getDatasourceFileDAO() {
+		return datasourceFileDAO;
+	}
+
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO) {
+		this.datasourceFileDAO = datasourceFileDAO;
+	}
+
+	@Override
+	public String getPortfolioCode() {
+		return portfolioCode;
+	}
+
+	@Override
+	public void setPortfolioCode(String portId) {
+		this.portfolioCode = portId;
+	}
+
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+
+	public String getAttrtnName() {
+		return attrtnName;
+	}
+
+	public void setAttrtnName(String attrtnName) {
+		this.attrtnName = attrtnName;
+	}
+
+	public String getAttrtnTypeCd() {
+		return attrtnTypeCd;
+	}
+
+	public void setAttrtnTypeCd(String attrtnTypeCd) {
+		this.attrtnTypeCd = attrtnTypeCd;
+	}
+
+	public BigDecimal getAttrtnTypeVal() {
+		return attrtnTypeVal;
+	}
+
+	public void setAttrtnTypeVal(BigDecimal attrtnTypeVal) {
+		this.attrtnTypeVal = attrtnTypeVal;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	@Override
+	public String toString() {
+		return "AttributionTargetDAO [id=" + id + ", datasourceFileDAO=" + datasourceFileDAO + ", PortId="
+				+ portfolioCode + ", EffectiveDate=" + effectiveDate + ", AttributionCode=" + attrtnTypeCd
+				+ ", AttributionTypeValue=" + attrtnTypeVal + "]";
+	}
+  
+  PortfolioDAO
+  
+  /*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/branches/1.0.1/src/main/java/com/vanguard/corp/ics/dao/PortfolioDAO.java $
+ $LastChangedRevision: 587237 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-08-06 19:49:28 -0400 (Sun, 06 Aug 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+public interface PortfolioDAO<T extends Number> extends DAO<T> {
+
+	public String getPortfolioCode();
+
+	public void setPortfolioCode(String portfolioCode);
+}
+
+
+}
+
+ReportingDAO
+
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/branches/1.0.1/src/main/java/com/vanguard/corp/ics/dao/ReportingDAO.java $
+ $LastChangedRevision: 606191 $
+ $Author: uoex $
+ $LastChangedDate: 2017-10-25 23:28:47 -0400 (Wed, 25 Oct 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+import java.util.Date;
+
+public interface ReportingDAO<T extends Number> extends DAO<T> {
+
+	/**
+	 * Returns the date used to determine the applicable reporting period for a
+	 * DAO.
+	 *
+	 * @return the reporting period date
+	 */
+	public Date getReportingDate();
+}
+
+FileDAO
+/*
+ ****************************************************************************
+ *
+ * Copyright (c)2017 The Vanguard Group of Investment Companies (VGI)
+ * All rights reserved.
+ *
+ * This source code is CONFIDENTIAL and PROPRIETARY to VGI. Unauthorized
+ * distribution, adaptation, or use may be subject to civil and criminal
+ * penalties.
+ *
+ ****************************************************************************
+ Module Description:
+
+ $HeadURL: http://prdsvnrepo:8080/svn/tip/tip/via/PSI/Java/SMA/Shared/TargetDataAccess/branches/1.0.1/src/main/java/com/vanguard/corp/ics/dao/FileDAO.java $
+ $LastChangedRevision: 587237 $
+ $Author: uvtc $
+ $LastChangedDate: 2017-08-06 19:49:28 -0400 (Sun, 06 Aug 2017) $
+*/
+package com.vanguard.corp.ics.dao;
+
+import com.vanguard.corp.ics.dao.target.DatasourceFileDAO;
+
+public interface FileDAO<T extends Number> extends DAO<T> {
+
+	public DatasourceFileDAO getDatasourceFileDAO();
+
+	public void setDatasourceFileDAO(DatasourceFileDAO datasourceFileDAO);
+
+}
+
+
+DAO
+
+package com.vanguard.corp.ics.dao;
+
+import java.io.Serializable;
+
+public interface DAO<T extends Number> extends Serializable {
+
+	T getId();
+
+	void setId(T id);
+}
+
+Number
+
+
+
+/*
+ * Copyright (c) 1994, 2011, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+package java.lang;
+
+/**
+ * The abstract class {@code Number} is the superclass of platform
+ * classes representing numeric values that are convertible to the
+ * primitive types {@code byte}, {@code double}, {@code float}, {@code
+ * int}, {@code long}, and {@code short}.
+ *
+ * The specific semantics of the conversion from the numeric value of
+ * a particular {@code Number} implementation to a given primitive
+ * type is defined by the {@code Number} implementation in question.
+ *
+ * For platform classes, the conversion is often analogous to a
+ * narrowing primitive conversion or a widening primitive conversion
+ * as defining in <cite>The Java&trade; Language Specification</cite>
+ * for converting between primitive types.  Therefore, conversions may
+ * lose information about the overall magnitude of a numeric value, may
+ * lose precision, and may even return a result of a different sign
+ * than the input.
+ *
+ * See the documentation of a given {@code Number} implementation for
+ * conversion details.
+ *
+ * @author      Lee Boynton
+ * @author      Arthur van Hoff
+ * @jls 5.1.2 Widening Primitive Conversions
+ * @jls 5.1.3 Narrowing Primitive Conversions
+ * @since   JDK1.0
+ */
+public abstract class Number implements java.io.Serializable {
+    /**
+     * Returns the value of the specified number as an {@code int},
+     * which may involve rounding or truncation.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code int}.
+     */
+    public abstract int intValue();
+
+    /**
+     * Returns the value of the specified number as a {@code long},
+     * which may involve rounding or truncation.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code long}.
+     */
+    public abstract long longValue();
+
+    /**
+     * Returns the value of the specified number as a {@code float},
+     * which may involve rounding.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code float}.
+     */
+    public abstract float floatValue();
+
+    /**
+     * Returns the value of the specified number as a {@code double},
+     * which may involve rounding.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code double}.
+     */
+    public abstract double doubleValue();
+
+    /**
+     * Returns the value of the specified number as a {@code byte},
+     * which may involve rounding or truncation.
+     *
+     * <p>This implementation returns the result of {@link #intValue} cast
+     * to a {@code byte}.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code byte}.
+     * @since   JDK1.1
+     */
+    public byte byteValue() {
+        return (byte)intValue();
+    }
+
+    /**
+     * Returns the value of the specified number as a {@code short},
+     * which may involve rounding or truncation.
+     *
+     * <p>This implementation returns the result of {@link #intValue} cast
+     * to a {@code short}.
+     *
+     * @return  the numeric value represented by this object after conversion
+     *          to type {@code short}.
+     * @since   JDK1.1
+     */
+    public short shortValue() {
+        return (short)intValue();
+    }
+
+    /** use serialVersionUID from JDK 1.0.2 for interoperability */
+    private static final long serialVersionUID = -8742448824652078965L;
+}
